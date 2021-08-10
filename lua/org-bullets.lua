@@ -57,7 +57,8 @@ end
 ---@param line number
 ---@param conf BulletsConfig
 local function set_line_mark(lnum, line, conf)
-  local match = fn.matchstrpos(line, [[^\*\{1,}\ze\s]])
+  --local match = fn.matchstrpos(line, [[^\*\{1,}\ze\s]])
+  local match = fn.matchstrpos(line, [[^\#\{1,}\ze\s]])
   local str, start_col, end_col = match[1], match[2], match[3]
   if start_col > -1 and end_col > -1 then
     local level = #str
