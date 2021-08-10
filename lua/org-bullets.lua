@@ -6,7 +6,8 @@ local api = vim.api
 local org_ns = api.nvim_create_namespace("org_bullets")
 local org_headline_hl = "OrgHeadlineLevel"
 
-local symbols = { "◉", "○", "✸", "✿" }
+--local symbols = { "◉", "○", "✸", "✿" }
+local symbols = {"", "", "✸", "✿", ""}
 
 ---@class BulletsConfig
 ---@field public show_current_line boolean
@@ -63,6 +64,17 @@ local function set_line_mark(lnum, line, conf)
   if start_col > -1 and end_col > -1 then
     local level = #str
     local padding = level <= 0 and "" or string.rep(" ", level - 1)
+    local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
+    local highlight = org_headline_hl .. level
+    set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
+  end
+
+  match = fn.matchstrpos(line, [[^\s*[\*\-]\ze\s]])
+  str, start_col, end_col = match[1], match[2], match[3]
+  if start_col > -1 and end_col > -1 then
+    local level = #symbols
+    local padding = string.rep(" ", end_col - 1)
+    print("padding"..padding.."padidng")
     local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
     local highlight = org_headline_hl .. level
     set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
