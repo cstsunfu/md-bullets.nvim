@@ -1,4 +1,4 @@
-local ok, bullets = pcall(require, "org-bullets")
+local ok, bullets = pcall(require, "md-bullets")
 if not ok then
   return vim.notify(
     "Org bullets is not available, please ensure it is loaded",
