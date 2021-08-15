@@ -28,7 +28,7 @@ function M.augroup(name, commands)
     local command = c.command
     if type(command) == "function" then
       local fn_id = _create(command)
-      command = fmt("lua require('org-bullets.utils')._execute(%s)", fn_id)
+      command = fmt("lua require('md-bullets.utils')._execute(%s)", fn_id)
     end
     vim.cmd(
       string.format(

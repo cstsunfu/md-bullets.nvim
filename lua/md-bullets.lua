@@ -3,8 +3,8 @@ local M = {}
 local fn = vim.fn
 local api = vim.api
 
-local org_ns = api.nvim_create_namespace("org_bullets")
-local org_headline_hl = "OrgHeadlineLevel"
+local md_ns = api.nvim_create_namespace("md_bullets")
+local md_headline_hl = "MdHeadlineLevel"
 
 --local symbols = { "◉", "○", "✸", "✿" }
 local symbols = {"", "", "✸", "✿", ""}
@@ -39,7 +39,7 @@ end
 ---@param end_col integer
 ---@param highlight string
 local function set_mark(virt_text, lnum, start_col, end_col, highlight)
-  local ok, result = pcall(api.nvim_buf_set_extmark, 0, org_ns, lnum, start_col, {
+  local ok, result = pcall(api.nvim_buf_set_extmark, 0, md_ns, lnum, start_col, {
     end_col = end_col,
     hl_group = highlight,
     virt_text = { virt_text },
@@ -65,7 +65,7 @@ local function set_line_mark(lnum, line, conf)
     local level = #str
     local padding = level <= 0 and "" or string.rep(" ", level - 1)
     local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
-    local highlight = org_headline_hl .. level
+    local highlight = md_headline_hl .. level
     set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
   end
 
@@ -76,7 +76,7 @@ local function set_line_mark(lnum, line, conf)
     local padding = string.rep(" ", end_col - 1)
     print("padding"..padding.."padidng")
     local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
-    local highlight = org_headline_hl .. level
+    local highlight = md_headline_hl .. level
     set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
   end
 end
@@ -85,7 +85,7 @@ end
 ---used on reloading the buffer or on first entering
 local function conceal_buffer()
   marks = {}
-  api.nvim_buf_clear_namespace(0, org_ns, 0, -1)
+  api.nvim_buf_clear_namespace(0, md_ns, 0, -1)
   local lines = api.nvim_buf_get_lines(0, 0, -1, false)
   for index, line in ipairs(lines) do
     set_line_mark(index - 1, line, config)
@@ -112,7 +112,7 @@ local function update_changed_lines(_, buf, __, firstline, lastline, new_lastlin
   for lnum = firstline, new_lastline - 1 do
     local id = marks[lnum]
     if id then
-      api.nvim_buf_del_extmark(0, org_ns, id)
+      api.nvim_buf_del_extmark(0, md_ns, id)
     end
     set_line_mark(lnum, lines[index], config)
     index = index + 1
@@ -144,8 +144,8 @@ local function toggle_line_visibility()
   if not id then
     return
   end
-  local mark = api.nvim_buf_get_extmark_by_id(0, org_ns, id, { details = true })
-  api.nvim_buf_del_extmark(0, org_ns, id)
+  local mark = api.nvim_buf_get_extmark_by_id(0, md_ns, id, { details = true })
+  api.nvim_buf_del_extmark(0, md_ns, id)
   marks[lnum] = nil
   if changed then
     last_lnum = {
@@ -155,10 +155,10 @@ local function toggle_line_visibility()
   end
 end
 
---- Initialise autocommands for the org buffer
+--- Initialise autocommands for the md buffer
 --- @param conf BulletsConfig
 local function setup_autocommands(conf)
-  local utils = require("org-bullets.utils")
+  local utils = require("md-bullets.utils")
   local commands = {
     {
       events = { "BufRead", "TextChanged", "TextChangedI", "TextChangedP" },
@@ -173,11 +173,11 @@ local function setup_autocommands(conf)
       command = toggle_line_visibility,
     })
   end
-  utils.augroup("OrgBullets", commands)
+  utils.augroup("MdBullets", commands)
 end
 
---- Apply plugin to the current org buffer. This is called from a ftplugin
---- so it applies to any org buffers opened
+--- Apply plugin to the current md buffer. This is called from a ftplugin
+--- so it applies to any md buffers opened
 function M.__init()
   conceal_buffer()
   setup_autocommands(config)
