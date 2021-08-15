@@ -1,20 +1,7 @@
-# Org-bullets.nvim
+# md-bullets.nvim
 
-This plugin is a clone of [org-bullets](https://github.com/sabof/org-bullets).
-It replaces the asterisks in org syntax with unicode characters.
-
-This plugin is an extension intended for use with [orgmode.nvim](https://github.com/kristijanhusak/orgmode.nvim)
-
-**status**: experimental
-
-This plugin works by using neovim `extmarks`, rather than `conceal` for a few reasons.
-
-- conceal can only have one global highlight see `:help hl-Conceal`.
-- conceal doesn't work when a block is folded.
-
-_see below for a simpler conceal-based solution_
-
-![folded](https://user-images.githubusercontent.com/22454918/125088455-525df300-e0c5-11eb-9b36-47c238b46971.png)
+This plugin is a clone of [org-bullets](https://github.com/akinsho/org-bullets.nvim). PS: Almost all code is copied directly from the origin repo.
+This plugin is used for markdown.
 
 ## Pre-requisites
 
@@ -22,8 +9,10 @@ _see below for a simpler conceal-based solution_
 
 ## Installation
 
+The last symbols is displayed for list.
+
 ```lua
-use {"akinsho/org-bullets.nvim", config = function()
+use {"cstsunfu/md-bullets.nvim", config = function()
   require("org-bullets").setup {
     symbols = { "◉", "○", "✸", "✿" }
     -- or a function that receives the defaults and returns a list
@@ -46,7 +35,3 @@ syntax match OrgHeadlineStar2 /^\*\{2}\ze\s/me=e-1 conceal cchar=○ containedin
 syntax match OrgHeadlineStar3 /^\*\{3}\ze\s/me=e-1 conceal cchar=✸ containedin=OrgHeadlineLevel3 contained
 syntax match OrgHeadlineStar4 /^\*{4}\ze\s/me=e-1 conceal cchar=✿ containedin=OrgHeadlineLevel4 contained
 ```
-
-## TODO:
-
-- [ ] Add some degree of concealcursor-like behaviour
