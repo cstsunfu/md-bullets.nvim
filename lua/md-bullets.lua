@@ -74,7 +74,6 @@ local function set_line_mark(lnum, line, conf)
   if start_col > -1 and end_col > -1 then
     local level = #symbols
     local padding = string.rep(" ", end_col - 1)
-    print("padding"..padding.."padidng")
     local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
     local highlight = md_headline_hl .. level
     set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
