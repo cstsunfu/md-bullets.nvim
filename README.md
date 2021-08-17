@@ -24,14 +24,3 @@ use {"cstsunfu/md-bullets.nvim", config = function()
 end}
 
 ```
-
-### Conceal-based alternative
-
-A simpler conceal based alternative is:
-
-```vim
-syntax match MdHeadlineStar1 /^\*\ze\s/me=e-1 conceal cchar=◉ containedin=OrgHeadlineLevel1 contained
-syntax match MdHeadlineStar2 /^\*\{2}\ze\s/me=e-1 conceal cchar=○ containedin=OrgHeadlineLevel2 contained
-syntax match MdHeadlineStar3 /^\*\{3}\ze\s/me=e-1 conceal cchar=✸ containedin=OrgHeadlineLevel3 contained
-syntax match MdHeadlineStar4 /^\*{4}\ze\s/me=e-1 conceal cchar=✿ containedin=OrgHeadlineLevel4 contained
-```
