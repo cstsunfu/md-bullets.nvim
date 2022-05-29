@@ -5,9 +5,13 @@ local api = vim.api
 
 local md_ns = api.nvim_create_namespace("md_bullets")
 local md_headline_hl = "MdHeadlineLevel"
+local md_list_hl = "MdList"
+local md_cite_hl = "MdCiteLevel"
 
 --local symbols = { "◉", "○", "✸", "✿" }
-local symbols = { "", "", "✸", "✿", "" }
+local symbols = { "", "", "✸", "✿", "○"}
+local list_symbol = ""
+local cite_symbols = {"▎", "▎▎"}
 
 ---@class BulletsConfig
 ---@field public show_current_line boolean
@@ -15,6 +19,8 @@ local symbols = { "", "", "✸", "✿", "" }
 local config = {
     show_current_line = false,
     symbols = symbols,
+    list_symbol = list_symbol,
+    cite_symbols = cite_symbols
 }
 
 ---@type table<integer,integer>
@@ -58,7 +64,7 @@ end
 ---@param line number
 ---@param conf BulletsConfig
 local function set_line_mark(lnum, line, conf)
-    --local match = fn.matchstrpos(line, [[^\*\{1,}\ze\s]])
+    -- head
     local match = fn.matchstrpos(line, [[^\#\{1,}\ze\s]])
     local str, start_col, end_col = match[1], match[2], match[3]
     if start_col > -1 and end_col > -1 then
@@ -72,14 +78,28 @@ local function set_line_mark(lnum, line, conf)
         set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
     end
 
+    -- cite
+    match = fn.matchstrpos(line, [[^>\{1,}\ze\s]])
+    str, start_col, end_col = match[1], match[2], match[3]
+    if start_col > -1 and end_col > -1 then
+        padding = ""
+        level = #str
+        if not vim.g.disable_md_bullets_padding then
+            padding = level <= 0 and "" or string.rep(" ", level - 1)
+        end
+        local symbol = padding .. (conf.cite_symbols[level] or conf.cite_symbols[1]) .. " "
+        local highlight = md_cite_hl .. level
+        set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
+    end
+
+    -- list
     match = fn.matchstrpos(line, [[^\s*[\*\-]\ze\s]])
     str, start_col, end_col = match[1], match[2], match[3]
     if start_col > -1 and end_col > -1 then
         local padding = ""
-        local level = #conf.symbols
         padding = string.rep(" ", end_col - 1)
-        local symbol = padding .. (conf.symbols[level] or conf.symbols[1]) .. " "
-        local highlight = md_headline_hl .. level
+        local symbol = padding .. (conf.list_symbol) .. " "
+        local highlight = md_list_hl
         set_mark({ symbol, highlight }, lnum, start_col, end_col, highlight)
     end
 end
