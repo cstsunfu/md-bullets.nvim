@@ -24,3 +24,10 @@ use {"cstsunfu/md-bullets.nvim", config = function()
 end}
 
 ```
+
+
+```
+Headline highlight: "MdHeadlineLevel[#num]"
+List highlight: "MdList"
+Cite highlight: "MdCiteLevel[#num]"
+```
